@@ -1,3 +1,5 @@
+import { azureOpenAIResourceConfig } from 'types/aoai_resource_config.bicep'
+
 // the account field 'kind' is a value obtained from there: // CognitiveService account type. For more details: https://learn.microsoft.com/en-us/azure/ai-services/create-account-bicep?tabs=CLI#azure-openai
 @description('OpenAI account kind to be used')
 param openAIAccountKind string = 'OpenAI'
@@ -19,7 +21,7 @@ param chatGPTLocation string  = 'swedencentral'
 // for model region availability visit:
 // https://learn.microsoft.com/en-us/azure/ai-services/openai/concepts/models?source=recommendations
 @description('ChatGPT model to be used')
-param chatGPTModel object = {
+param chatGPTModel azureOpenAIResourceConfig = {
   account: {
     name: 'chat-completions-testing-account'
     location: chatGPTLocation
@@ -38,7 +40,7 @@ param chatGPTModel object = {
 }
 
 @description('whisper model to be used')
-param whisperModel object = {
+param whisperModel azureOpenAIResourceConfig = {
   account: {
     name: 'audio-testing-account'
     location: 'eastus2'
