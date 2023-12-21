@@ -1,5 +1,7 @@
 # Run
 
+Note: re running the script should not have any changes in the infra, as bicep template scripts are idempotent.
+
 ## Select the right Subscription
 
 ```

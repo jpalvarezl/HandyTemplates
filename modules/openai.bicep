@@ -33,6 +33,10 @@ resource azureOpenAIAccount 'Microsoft.CognitiveServices/accounts@2023-10-01-pre
   location: openAIAccount.location
   sku: openAIAccount.sku
   kind: openAIAccount.kind
+  properties: {
+    customSubDomainName: openAIAccount.name
+    publicNetworkAccess: 'Enabled'
+  }
 }
 
 resource azureOpenAIDeployment 'Microsoft.CognitiveServices/accounts/deployments@2023-10-01-preview' = {
@@ -40,6 +44,7 @@ resource azureOpenAIDeployment 'Microsoft.CognitiveServices/accounts/deployments
   name: openAIDeployment.name
   properties: {
     model: openAIDeployment.model
+    raiPolicyName: 'Microsoft.Default'
   }
   sku: openAIDeployment.sku
 }
