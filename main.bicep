@@ -13,13 +13,16 @@ param openAIDeploymentSku object = {
   capacity: 1
 }
 
+@description('Azure region where the text model account and cognitive search will be created')
+param chatGPTLocation string  = 'swedencentral'
+
 // for model region availability visit:
 // https://learn.microsoft.com/en-us/azure/ai-services/openai/concepts/models?source=recommendations
 @description('ChatGPT model to be used')
 param chatGPTModel object = {
   account: {
     name: 'chat-completions-testing-account'
-    location: 'swedencentral'
+    location: chatGPTLocation
     kind: openAIAccountKind
     sku: openAIAccountSku
   }  
@@ -66,3 +69,10 @@ module openAIResource 'modules/openai.bicep' = [for openAIDeployment in openAIDe
     openAIDeployment: openAIDeployment.deployment
   }
 }]
+
+module cognitiveSearch 'modules/cognitive_search.bicep' = {
+  name: 'cognitive-search'
+  params: {
+    location: chatGPTLocation
+  }
+}

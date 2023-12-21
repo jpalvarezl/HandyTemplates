@@ -22,6 +22,27 @@ To am existing resource group:
 az deployment group create --resource-group <resource-group-name> --template-file <path-to-template>
 ```
 
+# Delete
+
+You may want to delete the resources you create with these bicep templates. That is not currently supported in Az CLI.
+
+## Troubleshooting
+
+There are various ways to go around this limitation. If you delete the resources manually (and want to keep the parent resource group) you migght run into a a "FlagMustBeSetForRestore" error, telling you to either purge the soft deleted resources or restore them.
+
+To purge:
+
+```bash
+az cognitiveservices account purge  -l <location> -n <resource-name> -g <parent-resource-name>
+```
+
+You will have to do this for every individual resource causing problems.
+
+## --mode Complete
+
+You will find a lot of people running `az deployment gourp create --resource-group <rg> --template-file empty.bicep --mode complete`.
+
+This is a well established hack. `--mode complete` will delete all the resources that aren't part of your bicep script. Therefore, if you have an empty script, it will delete all the resources. This is considered a bad practice, as you may accidentally delete things you shouldn't.
 
 # Reference
 
