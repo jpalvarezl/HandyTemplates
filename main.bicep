@@ -1,36 +1,67 @@
-// Keep an eye on supported regions: https://learn.microsoft.com/en-us/azure/ai-services/openai/concepts/models?source=recommendations
-@description('Location for all resources.')
-param location string = 'westus'//resourceGroup().location
+// the account field 'kind' is a value obtained from there: // CognitiveService account type. For more details: https://learn.microsoft.com/en-us/azure/ai-services/create-account-bicep?tabs=CLI#azure-openai
+@description('OpenAI account kind to be used')
+param openAIAccountKind string = 'OpenAI'
 
-@description('OpenAI account name')
-param openAIName string = 'aoai-account-name-${uniqueString(resourceGroup().id)}'
+@description('OpenAI account SKU to be used')
+param openAIAccountSku object = {
+  name: 's0'
+}
 
-@allowed([
-  'S0'
-])
-param sku string = 'S0'
+@description('Azure OppenAI deployment SKU')
+param openAIDeploymentSku object = {
+  name: 'Standard'
+  capacity: 1
+}
 
-module openAI 'modules/openai.bicep' = {
-  name: 'openAI'
-  params: {
-    name: openAIName
-    sku: sku
-    location: location
+// for model region availability visit:
+// https://learn.microsoft.com/en-us/azure/ai-services/openai/concepts/models?source=recommendations
+@description('ChatGPT model to be used')
+param chatGPTModel object = {
+  account: {
+    name: 'chat-completions-testing-account'
+    location: 'swedencentral'
+    kind: openAIAccountKind
+    sku: openAIAccountSku
+  }  
+  deployment: {
+    name: 'gpt-35-turbo-1106'
+    model: {
+      format: 'OpenAI'
+      name: 'gpt-35-turbo'
+      version: '1106'
+    }
+    sku: openAIDeploymentSku
   }
 }
 
-// module cognitiveSearch 'modules/cognitive_search.bicep' = {
-//   name: 'cognitiveSearch'
-//   params: {
-//     location: location
-//   }
-// }
+@description('whisper model to be used')
+param whisperModel object = {
+  account: {
+    name: 'audio-testing-account'
+    location: 'eastus2'
+    kind: openAIAccountKind
+    sku: openAIAccountSku
+  }
+  deployment: {
+    name: 'whisper-01'
+    model: {
+      format: 'OpenAI'
+      name: 'whisper'
+      version: '1'
+    }
+    sku: openAIDeploymentSku
+  }
+}
 
-// module cosmoDB 'modules/cosmo_db.bicep' = {
-//   name: 'cosmoDB'
-//   params: {
-//     location: location
-//     containerName: 'azure_openai_test_cosmo_db_container'
-//     databaseName: 'azure_openai_test_cosmo_db_database'
-//   }
-// }
+param openAIDeployments array = [
+  chatGPTModel
+  whisperModel
+]
+
+module openAIResource 'modules/openai.bicep' = [for openAIDeployment in openAIDeployments:{
+  name: '${openAIDeployment.account.name}-${openAIDeployment.deployment.name}'
+  params: {
+    openAIAccount: openAIDeployment.account
+    openAIDeployment: openAIDeployment.deployment
+  }
+}]

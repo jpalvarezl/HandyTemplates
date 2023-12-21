@@ -1,60 +1,45 @@
-@description('Name of the OpenAI account.')
-param name string
-
-@description('Location for all resources.')
-param location string
-
-@description('ChatGPT model to be used')
-param chatGPTModel object = {
-  name: 'gpt-35-turbo-1106'
-  model: {
-    format: 'OpenAI'
-    name: 'gpt-35-turbo'
-    version: '1106'
+@description('''
+The Azure OpenAI account in which the OpenAI model will be deployed. It should follow the following structure:
+{
+  name: string
+  location: string
+  sku: {
+    name: string
   }
-  version: '1106'
+  kind: string
 }
+''')
+param openAIAccount object
 
-@description('whisper model to be used')
-param whisperModel object = {
-  name: 'whisper'
+@description('''
+The deployment is expected to have the following structure:
+{
+  name: string
   model: {
-    format: 'OpenAI'
-    name: 'whisper'
-    version: '1'
+    format: string
+    name: string
+    version: string
+  }
+  sku: {
+    name: string
+    capacity: number
   }
 }
-
-@allowed([
-  'S0'
-])
-param sku string
-
-@description('CognitiveService account type. For more details: ')
-param kind string = 'OpenAI'
-
-param deployments array = [
-  chatGPTModel
-  // whisperModel // Find a nice overlapping region for all the resources. Whisper is not available in westus
-]
+''')
+param openAIDeployment object
 
 resource azureOpenAIAccount 'Microsoft.CognitiveServices/accounts@2023-10-01-preview' = {
-  name: name
-  location: location
-  sku: {
-    name: sku
-  }
-  kind: kind
+  name: openAIAccount.name
+  location: openAIAccount.location
+  sku: openAIAccount.sku
+  kind: openAIAccount.kind
 }
 
-resource azureOpenAIDeployment 'Microsoft.CognitiveServices/accounts/deployments@2023-10-01-preview' = [for deployment in deployments: {
+resource azureOpenAIDeployment 'Microsoft.CognitiveServices/accounts/deployments@2023-10-01-preview' = {
   parent: azureOpenAIAccount
-  name: deployment.name
+  name: openAIDeployment.name
   properties: {
-    model: deployment.model
+    model: openAIDeployment.model
   }
-  sku: {
-    name: 'Standard'
-    capacity: 20
-  }
-}]
+  sku: openAIDeployment.sku
+}
