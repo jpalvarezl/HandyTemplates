@@ -1,3 +1,5 @@
+# Run
+
 ## Select the right Subscription
 
 ```
@@ -17,3 +19,8 @@ To am existing resource group:
 ```
 az deployment group create --resource-group <resource-group-name> --template-file <path-to-template>
 ```
+
+
+# Reference
+
+Borrowed heavily from this [repo](https://github.com/Azure-Samples/azure-search-openai-demo-csharp/blob/main/infra/main.bicep)
