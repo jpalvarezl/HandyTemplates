@@ -1,0 +1,8 @@
+{
+    "name": "my_index",
+    "fields": [
+      { "name": "id", "type": "Edm.String", "key": true, "searchable": false },
+      { "name": "content", "type": "Edm.String", "searchable": true }
+    ]
+  }
+  
