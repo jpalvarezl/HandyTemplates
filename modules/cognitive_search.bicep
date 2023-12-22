@@ -27,20 +27,24 @@ resource cognitiveSearch 'Microsoft.Search/searchServices@2023-11-01' = {
       apiKeyOnly: {}
     }
   }
-} 
+}
 
-module cognitiveSearchPrimaryKeySecret 'key_vault_store.bicep' = {
-  name: 'cog-search-primary-key'
+// we re-purpose the secret name for the name of the deployment for their respective resources
+var keySecretName = 'cognitive-search-primary-key'
+var endpointSecretName = 'cognitive-search-endpoint'
+
+module cognitiveSearchPrimaryKeySecret '../secrets/secret.bicep' = {
+  name: keySecretName
   params: {
-    name: 'COGNITIVE_SEARCH_PRIMARY_KEY'
+    name: keySecretName
     value: cognitiveSearch.listAdminKeys().primaryKey
   }
 }
 
-module cognitiveSearchEndpointSecret 'key_vault_store.bicep' = {
-  name: 'cog-search-endpoint'
+module cognitiveSearchEndpointSecret '../secrets/secret.bicep' = {
+  name: endpointSecretName
   params: {
-    name: 'COGNITIVE_SEARCH_ENDPOINT'
+    name: endpointSecretName
     value: 'https://${cognitiveSearch.name}.search.windows.net'
   }
 }

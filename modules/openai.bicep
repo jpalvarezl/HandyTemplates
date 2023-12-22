@@ -27,18 +27,22 @@ resource azureOpenAIDeployment 'Microsoft.CognitiveServices/accounts/deployments
   sku: openAIDeployment.sku
 }
 
-module azureOpenAIKeySecret 'key_vault_store.bicep' = {
-  name: '${azureOpenAIDeployment.name}-openai-endpoint'
+// we re-purpose the secret name for the name of the deployment for their respective resources
+var endpointSecretName = '${azureOpenAIDeployment.name}-openai-endpoint'
+var keySecretName = '${azureOpenAIDeployment.name}-openai-key'
+
+module azureOpenAIKeySecret '../secrets/secret.bicep' = {
+  name: keySecretName
   params: {
-    name: '${toUpper(replace(azureOpenAIDeployment.name, '-', '_')) }_SECRET_KEY'
+    name: keySecretName
     value: azureOpenAIAccount.listKeys().key1
   }
 }
 
-module azureOpenAIEndpointSecret 'key_vault_store.bicep' = {
-  name: '${azureOpenAIDeployment.name}-openai-key'
+module azureOpenAIEndpointSecret '../secrets/secret.bicep' = {
+  name: endpointSecretName
   params: {
-    name: '${toUpper(replace(azureOpenAIDeployment.name, '-', '_')) }_ENDPOINT'
-    value: azureOpenAIAccount.listKeys().key1
+    name: endpointSecretName
+    value: azureOpenAIAccount.properties.endpoint
   }
 }
