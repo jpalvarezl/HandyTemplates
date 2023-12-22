@@ -1,0 +1,27 @@
+### No streaming tool call
+POST {{$dotenv GPT_35_TURBO_1106_OPENAI_ENDPOINT}}openai/deployments/gpt-35-turbo-1106/chat/completions?api-version=2023-12-01-preview
+Content-Type: application/json
+api-key: {{$dotenv GPT_35_TURBO_1106_OPENAI_KEY}}
+Accept: application/json
+
+{
+    "messages": [
+        {
+            "role": "user",
+            "content": "What does PR complete mean?"
+        }
+    ],
+    "dataSources": [
+        {
+            "type": "AzureCognitiveSearch",
+            "parameters": {
+                "endpoint": "{{ $dotenv COGNITIVE_SEARCH_ENDPOINT }}",
+                "indexName": "openai-test-index-carbon-wiki",
+                "authentication": {
+                    "type": "APIKey",
+                    "key": "{{ $dotenv COGNITIVE_SEARCH_PRIMARY_KEY }}"
+                }
+            }
+        }
+    ]
+}
