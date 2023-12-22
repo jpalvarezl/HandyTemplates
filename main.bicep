@@ -1,4 +1,4 @@
-import { azureOpenAIResourceConfig } from 'types/aoai_resource_config.bicep'
+import { azureOpenAIResourceConfig } from 'types/aoai_resource.bicep'
 
 // the account field 'kind' is a value obtained from there: // CognitiveService account type. For more details: https://learn.microsoft.com/en-us/azure/ai-services/create-account-bicep?tabs=CLI#azure-openai
 @description('OpenAI account kind to be used')
@@ -63,14 +63,14 @@ param openAIDeployments array = [
   whisperModel
 ]
 
-// module openAIResource 'modules/openai.bicep' = [for openAIDeployment in openAIDeployments:{
-//   // If you navigate to Azure portal, "name" will be the deployment name
-//   name: '${openAIDeployment.account.name}-${openAIDeployment.deployment.name}'
-//   params: {
-//     openAIAccount: openAIDeployment.account
-//     openAIDeployment: openAIDeployment.deployment
-//   }
-// }]
+module openAIResource 'modules/openai.bicep' = [for openAIDeployment in openAIDeployments:{
+  // If you navigate to Azure portal, "name" will be the deployment name
+  name: '${openAIDeployment.account.name}-${openAIDeployment.deployment.name}'
+  params: {
+    openAIAccount: openAIDeployment.account
+    openAIDeployment: openAIDeployment.deployment
+  }
+}]
 
 module cognitiveSearch 'modules/cognitive_search.bicep' = {
   name: 'cognitive-search'
