@@ -2,7 +2,6 @@
 @description('Value of the secret to be stored')
 param value string
 
-
 @secure()
 @description('Name of the key for the secret to be stored')
 param name string

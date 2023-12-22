@@ -1,3 +1,17 @@
+# Required parameters
+
+You should setup a service pricinpal using this [guide](https://learn.microsoft.com/en-us/entra/identity-platform/howto-create-service-principal-portal)
+Required environment variables:
+- `SERVICE_PRINCIPAL_OBJECT_ID`
+
+# Required manual steps
+
+- In order to see the value of a secret, there is still a manual step required. Go to [Azure portal](https://portal.azure.com)
+- Navigate to the key vault created by these templates (look for `aoai-tests-keyvault`)
+- Go to "Access control (IAM)" and click "Add role assignment"
+- Assign your principal's Object ID to the role "Key vault Secrets Officer"
+- (Optional) assign yourself too if you want to be able to access the secrets
+
 # Run
 
 Note: re running the script should not have any changes in the infra, as bicep template scripts are idempotent.
@@ -11,7 +25,7 @@ az account set --subscription <subscription_name>
 ## Check what changes
 
 ```
-az deployment group what-if --resource-group <target-rg-name> --template-file main.bicep
+az deployment group what-if --resource-group <target-rg-name> --template-file main.bicep --parameters main.bicepparam
 ```
 
 ## Actual deployment
@@ -19,8 +33,10 @@ az deployment group what-if --resource-group <target-rg-name> --template-file ma
 To am existing resource group: 
 
 ```
-az deployment group create --resource-group <resource-group-name> --template-file <path-to-template>
+az deployment group create --resource-group <resource-group-name> --template-file <path-to-template> --parameters main.bicepparam
 ```
+
+Adding `--paramater main.bicepparam` will prevent the Az CLI from prompting you for a value for `objectId`, it will be read directly from environment. (Don't forget to set it!)
 
 # Delete
 

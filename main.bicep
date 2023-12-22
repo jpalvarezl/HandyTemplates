@@ -1,5 +1,16 @@
 import { azureOpenAIResourceConfig } from 'types/aoai_resource.bicep'
 
+@description('''
+Use the object id of your service principal. This could be an app registration in MS Entra, for example.
+''')
+param objectId string
+
+@description('''
+Azure region of the parent resource group. 
+Alternatively, you can set it as the default for Az CLE.
+''')
+param location string = resourceGroup().location
+
 // the account field 'kind' is a value obtained from there: // CognitiveService account type. For more details: https://learn.microsoft.com/en-us/azure/ai-services/create-account-bicep?tabs=CLI#azure-openai
 @description('OpenAI account kind to be used')
 param openAIAccountKind string = 'OpenAI'
@@ -62,6 +73,14 @@ param openAIDeployments array = [
   chatGPTModel
   whisperModel
 ]
+
+module azureOpenAIKeyVault 'secrets/keyvault.bicep' = {
+  name: 'azure-openai-keyvault'
+  params: {
+    location: location
+    objectId: objectId
+  }
+}
 
 module openAIResource 'modules/openai.bicep' = [for openAIDeployment in openAIDeployments:{
   // If you navigate to Azure portal, "name" will be the deployment name
