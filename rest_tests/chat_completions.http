@@ -1,0 +1,43 @@
+### No streaming tool call
+POST {{$dotenv GPT_35_TURBO_1106_OPENAI_ENDPOINT}}openai/deployments/gpt-35-turbo-1106/chat/completions?api-version=2023-12-01-preview
+Content-Type: application/json
+api-key: {{$dotenv GPT_35_TURBO_1106_OPENAI_KEY}}
+Accept: application/json
+
+{
+    "messages": [
+        {
+            "role": "system",
+            "content": "You are a helpful assistant."
+        },
+        {
+            "role": "user",
+            "content": "What should I wear in Honolulu next Thursday?"
+        }
+    ],
+    "tools": [
+        {
+            "type": "function",
+            "function": {
+                "name": "FutureTemperature",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "date": {
+                            "description": "The date of the weather forecast.",
+                            "type": "string"
+                        },
+                        "locationName": {
+                            "description": "The name of the location to forecast the weather for.",
+                            "type": "string"
+                        },
+                        "unit": {
+                            "description": "The unit of measurement for the temperature.",
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        }
+    ]
+}
