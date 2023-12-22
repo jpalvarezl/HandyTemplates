@@ -63,14 +63,14 @@ param openAIDeployments array = [
   whisperModel
 ]
 
-module openAIResource 'modules/openai.bicep' = [for openAIDeployment in openAIDeployments:{
-  // If you navigate to Azure portal, "name" will be the deployment name
-  name: '${openAIDeployment.account.name}-${openAIDeployment.deployment.name}'
-  params: {
-    openAIAccount: openAIDeployment.account
-    openAIDeployment: openAIDeployment.deployment
-  }
-}]
+// module openAIResource 'modules/openai.bicep' = [for openAIDeployment in openAIDeployments:{
+//   // If you navigate to Azure portal, "name" will be the deployment name
+//   name: '${openAIDeployment.account.name}-${openAIDeployment.deployment.name}'
+//   params: {
+//     openAIAccount: openAIDeployment.account
+//     openAIDeployment: openAIDeployment.deployment
+//   }
+// }]
 
 module cognitiveSearch 'modules/cognitive_search.bicep' = {
   name: 'cognitive-search'

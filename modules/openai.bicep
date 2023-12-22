@@ -48,3 +48,19 @@ resource azureOpenAIDeployment 'Microsoft.CognitiveServices/accounts/deployments
   }
   sku: openAIDeployment.sku
 }
+
+module azureOpenAIKeySecret 'key_vault_store.bicep' = {
+  name: '${azureOpenAIDeployment.name}-openai-endpoint'
+  params: {
+    name: '${toUpper(replace(azureOpenAIDeployment.name, '-', '_')) }_SECRET_KEY'
+    value: azureOpenAIAccount.listKeys().key1
+  }
+}
+
+module azureOpenAIEndpointSecret 'key_vault_store.bicep' = {
+  name: '${azureOpenAIDeployment.name}-openai-key'
+  params: {
+    name: '${toUpper(replace(azureOpenAIDeployment.name, '-', '_')) }_ENDPOINT'
+    value: azureOpenAIAccount.listKeys().key1
+  }
+}
